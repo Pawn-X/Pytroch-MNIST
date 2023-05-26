@@ -79,8 +79,8 @@ def train(epoch):
         # 把运行中的loss累加起来
         running_loss += loss.item()
         #600个batch输出一次loss平均值
-        if batch_idx % 600 == 0:
-            print("Train Epoch : {} \t Loss : {:.6f}".format(epoch+1, running_loss / 600))
+        if batch_idx % 300 == 0:
+            print("Train Epoch : {} \t Loss : {:.6f}".format(epoch+1, running_loss / 300))
 
 def test():
     correct = 0
