@@ -1,0 +1,52 @@
+import torch
+import warnings
+
+def label_to_vec(label):
+#将len为4的标志（其中包含大小写英文，数字）转化为张量（4*62）
+    vector = torch.zeros((4, 62))
+    for i in range(len(label)):
+        if '0' <= label[i] <= '9':
+            num = ord(label[i]) - ord('0')
+            vector[i, num] = 1.
+
+        elif 'a' <= label[i] <= 'z':
+            num = ord(label[i]) - ord('a') + 10
+            vector[i, num] = 1.
+
+        elif 'A' <= label[i] <= 'Z':
+            num = ord(label[i]) - ord('A') + 36
+            vector[i, num] = 1.
+
+        else:
+            warnings.warn('wrong label')
+    #将数组展平
+    vector = vector.view(-1)
+
+    return vector
+
+def res_to_vec(res):
+#将模式输出结果res（4*62）转为标签张量类型的独热张量（4*62）
+    res = res.view(4, -1)
+    max_num = torch.argmax(res, dim=1)
+    vec = torch.zeros((4, 62))
+    for i, idx in enumerate(max_num):
+        vec[i, idx] = 1.
+    vec = vec.view(-1)
+    return vec
+
+def vec_to_label(vector):
+#将张量（4*62）转化为长度为4的标签
+    label = ''
+    vector = vector.view(4, -1)
+    max_num = torch.argmax(vector, dim=1)
+    for num in max_num:
+        if 0 <= num <= 9:
+            label = label + chr(num + ord('0'))
+        elif 10 <= num <= 35:
+            label = label + chr(num + ord('a') - 10)
+        elif 36 <= num <= 61:
+            label = label + chr(num + ord('A') - 36)
+        else:
+            warnings.warn('wrong label')
+
+    return label
